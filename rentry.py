@@ -8,12 +8,11 @@ import urllib.request
 from http.cookies import SimpleCookie
 from json import loads as json_loads
 from os import environ
-from dotenv import load_dotenv, dotenv_values
 
-load_dotenv()
-env = dotenv_values()
+BASE_PROTOCOL = "https://"
+BASE_URL = "rentry.co"
 
-_headers = {"Referer": f"{env['BASE_PROTOCOL']}{env['BASE_URL']}"}
+_headers = {"Referer": f"{BASE_PROTOCOL}{BASE_URL}"}
 
 
 class UrllibClient:
@@ -42,13 +41,13 @@ class UrllibClient:
 
 def raw(url):
     client = UrllibClient()
-    return json_loads(client.get(f"{env['BASE_PROTOCOL']}{env['BASE_URL']}" + '/api/raw/{}'.format(url)).data)
+    return json_loads(client.get(f"{BASE_PROTOCOL}{BASE_URL}" + '/api/raw/{}'.format(url)).data)
 
 
 def new(url, edit_code, text):
     client, cookie = UrllibClient(), SimpleCookie()
 
-    cookie.load(vars(client.get(f"{env['BASE_PROTOCOL']}{env['BASE_URL']}"))['headers']['Set-Cookie'])
+    cookie.load(vars(client.get(f"{BASE_PROTOCOL}{BASE_URL}"))['headers']['Set-Cookie'])
     csrftoken = cookie['csrftoken'].value
 
     payload = {
@@ -58,13 +57,13 @@ def new(url, edit_code, text):
         'text': text
     }
 
-    return json_loads(client.post(f"{env['BASE_PROTOCOL']}{env['BASE_URL']}" + '/api/new', payload, headers=_headers).data)
+    return json_loads(client.post(f"{BASE_PROTOCOL}{BASE_URL}" + '/api/new', payload, headers=_headers).data)
 
 
 def edit(url, edit_code, text):
     client, cookie = UrllibClient(), SimpleCookie()
 
-    cookie.load(vars(client.get(f"{env['BASE_PROTOCOL']}{env['BASE_URL']}"))['headers']['Set-Cookie'])
+    cookie.load(vars(client.get(f"{BASE_PROTOCOL}{BASE_URL}"))['headers']['Set-Cookie'])
     csrftoken = cookie['csrftoken'].value
 
     payload = {
@@ -73,7 +72,7 @@ def edit(url, edit_code, text):
         'text': text
     }
 
-    return json_loads(client.post(f"{env['BASE_PROTOCOL']}{env['BASE_URL']}" + '/api/edit/{}'.format(url), payload, headers=_headers).data)
+    return json_loads(client.post(f"{BASE_PROTOCOL}{BASE_URL}" + '/api/edit/{}'.format(url), payload, headers=_headers).data)
 
 
 def usage():
